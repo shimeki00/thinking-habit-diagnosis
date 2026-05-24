@@ -235,24 +235,30 @@ export default function ResultPage() {
   )
 }
 
+// 本文（複数ブロック）を段落/引用/箇条書きのブロックHTMLに整形する。
+// 空行区切りでブロック分割し、whitespace-pre-line に依存せず余白を制御する。
 function renderBody(text: string): string {
-  // blockquote: lines starting with "> " → <blockquote>
-  const lines = text.split('\n')
-  const out: string[] = []
-  let inQuote = false
-  for (const line of lines) {
-    if (line.startsWith('> ')) {
-      if (!inQuote) { out.push('<blockquote class="border-l-2 border-slate-300 pl-3 text-slate-500 italic my-1">'); inQuote = true }
-      out.push(line.slice(2).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'))
-    } else if (line === '>') {
-      if (inQuote) out.push('')
-    } else {
-      if (inQuote) { out.push('</blockquote>'); inQuote = false }
-      out.push(line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'))
-    }
-  }
-  if (inQuote) out.push('</blockquote>')
-  return out.join('\n')
+  const inline = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+  const blocks = text.split(/\n\s*\n/).map((b) => b.trim()).filter(Boolean)
+  return blocks
+    .map((block) => {
+      const lines = block.split('\n').map((l) => l.trim()).filter(Boolean)
+      if (lines.length === 0) return ''
+      if (lines.every((l) => l.startsWith('>'))) {
+        const quotes = lines
+          .map((l) => l.replace(/^>\s*/, '').trim())
+          .filter(Boolean)
+          .map(inline)
+        if (quotes.length === 0) return ''
+        return `<blockquote class="border-l-2 border-indigo-200 pl-3 italic text-slate-500">${quotes.join('<br/>')}</blockquote>`
+      }
+      if (lines.every((l) => l.startsWith('- '))) {
+        const items = lines.map((l) => `<li>${inline(l.slice(2).trim())}</li>`).join('')
+        return `<ul class="list-disc space-y-1 pl-5">${items}</ul>`
+      }
+      return `<p>${lines.map(inline).join('<br/>')}</p>`
+    })
+    .join('')
 }
 
 function TypeDetailView({ detail }: { detail: TypeDetail }) {
@@ -262,13 +268,10 @@ function TypeDetailView({ detail }: { detail: TypeDetail }) {
       {detail.intro.length > 0 && (
         <div id="intro" className="scroll-mt-20 px-6 py-6 sm:px-8">
           <SectionHeading>あなたはこんな人</SectionHeading>
-          <div className="mt-3 space-y-3">
-            {detail.intro.map((para, i) => (
-              <p key={i} className="text-sm leading-relaxed text-slate-700"
-                dangerouslySetInnerHTML={{ __html: renderBody(para) }}
-              />
-            ))}
-          </div>
+          <div
+            className="mt-3 space-y-3 text-sm leading-relaxed text-slate-700"
+            dangerouslySetInnerHTML={{ __html: renderBody(detail.intro.join('\n\n')) }}
+          />
         </div>
       )}
 
@@ -317,13 +320,10 @@ function TypeDetailView({ detail }: { detail: TypeDetail }) {
       {detail.teamImpact.length > 0 && (
         <div className="px-6 py-6 sm:px-8">
           <SectionHeading>チームへの影響</SectionHeading>
-          <div className="mt-3 rounded-lg bg-slate-50 p-4 space-y-3">
-            {detail.teamImpact.map((para, i) => (
-              <p key={i} className="text-sm leading-relaxed text-slate-700"
-                dangerouslySetInnerHTML={{ __html: renderBody(para) }}
-              />
-            ))}
-          </div>
+          <div
+            className="mt-3 space-y-3 rounded-lg bg-slate-50 p-4 text-sm leading-relaxed text-slate-700"
+            dangerouslySetInnerHTML={{ __html: renderBody(detail.teamImpact.join('\n\n')) }}
+          />
         </div>
       )}
 
@@ -343,11 +343,10 @@ function TypeDetailView({ detail }: { detail: TypeDetail }) {
       {detail.todayAction && (
         <div id="today" className="scroll-mt-20 px-6 py-6 sm:px-8">
           <SectionHeading>今日の1歩</SectionHeading>
-          <div className="mt-3 rounded-xl bg-indigo-600 p-5 text-white">
-            <p className="text-sm leading-relaxed whitespace-pre-line"
-              dangerouslySetInnerHTML={{ __html: renderBody(detail.todayAction) }}
-            />
-          </div>
+          <div
+            className="mt-3 space-y-2 rounded-xl bg-indigo-600 p-5 text-sm leading-relaxed text-white"
+            dangerouslySetInnerHTML={{ __html: renderBody(detail.todayAction) }}
+          />
         </div>
       )}
 
@@ -355,9 +354,10 @@ function TypeDetailView({ detail }: { detail: TypeDetail }) {
       {detail.askOthers && (
         <div className="px-6 py-6 sm:px-8">
           <SectionHeading>周囲に頼むこと</SectionHeading>
-          <p className="mt-3 text-sm leading-relaxed text-slate-700 whitespace-pre-line">
-            {detail.askOthers}
-          </p>
+          <div
+            className="mt-3 space-y-3 text-sm leading-relaxed text-slate-700"
+            dangerouslySetInnerHTML={{ __html: renderBody(detail.askOthers) }}
+          />
         </div>
       )}
 
@@ -399,9 +399,9 @@ function SectionCard({ section, color, num }: { section: Section; color: 'emeral
         <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${s.badge}`}>
           {num}
         </span>
-        <div>
+        <div className="min-w-0">
           <p className="text-sm font-semibold text-slate-800">{section.title}</p>
-          <p className="mt-1.5 text-sm leading-relaxed text-slate-700 whitespace-pre-line"
+          <div className="mt-1.5 space-y-2 text-sm leading-relaxed text-slate-700"
             dangerouslySetInnerHTML={{ __html: renderBody(section.body) }}
           />
         </div>
