@@ -304,7 +304,7 @@ function TypeDetailView({ detail }: { detail: TypeDetail }) {
         <div id="scenes" className="scroll-mt-20 px-6 py-6 sm:px-8">
           <SectionHeading>出やすい場面</SectionHeading>
           <ul className="mt-3 space-y-2">
-            {detail.triggerScenes.slice(0, 5).map((scene, i) => (
+            {detail.triggerScenes.map((scene, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
                 <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border border-slate-300 text-slate-400">
                   <span className="block h-1.5 w-1.5 rounded-full bg-slate-300" />
