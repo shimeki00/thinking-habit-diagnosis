@@ -153,8 +153,13 @@ export default function ResultPage() {
           </p>
 
           <dl className="mt-6 space-y-4">
+            <ResultDetail label="典型行動" value={top.type.typicalBehavior} />
+            <ResultDetail label="発動場面" value={top.type.triggerScene} />
+            <ResultDetail label="守りたいもの" value={top.type.protecting} />
+            <ResultDetail label="脅威認知" value={top.type.threatPerception} />
             <ResultDetail label="強みとして出る時" value={top.type.strength} />
             <ResultDetail label="弱みとして出る時" value={top.type.weakness} />
+            <ResultDetail label="組織への影響" value={top.type.orgImpact} />
             <ResultDetail label="今日の1アクション" value={top.type.action} />
             <ResultDetail label="周囲に頼むこと" value={top.type.askOthers} />
           </dl>

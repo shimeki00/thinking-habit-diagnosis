@@ -22,8 +22,13 @@ export type ThinkingHabitType = {
   category: string
   summary: string
   catchCopy: string
+  typicalBehavior: string
+  triggerScene: string
+  protecting: string
+  threatPerception: string
   strength: string
   weakness: string
+  orgImpact: string
   action: string
   askOthers: string
   note: string
