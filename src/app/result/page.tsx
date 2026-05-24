@@ -376,8 +376,8 @@ function TypeDetailView({ detail }: { detail: TypeDetail }) {
 function SectionHeading({ children, accent }: { children: React.ReactNode; accent?: 'emerald' | 'amber' | 'indigo' }) {
   const colors = {
     emerald: 'text-emerald-700',
-    amber: 'text-amber-700',
-    indigo: 'text-indigo-700',
+    amber: 'text-red-700',
+    indigo: 'text-yellow-700',
   }
   return (
     <h2 className={`text-sm font-bold ${accent ? colors[accent] : 'text-slate-800'}`}>
@@ -389,8 +389,8 @@ function SectionHeading({ children, accent }: { children: React.ReactNode; accen
 function SectionCard({ section, color, num }: { section: Section; color: 'emerald' | 'amber' | 'indigo'; num: number }) {
   const styles = {
     emerald: { badge: 'bg-emerald-100 text-emerald-700', card: 'border-emerald-100 bg-emerald-50' },
-    amber: { badge: 'bg-amber-100 text-amber-700', card: 'border-amber-100 bg-amber-50' },
-    indigo: { badge: 'bg-indigo-100 text-indigo-700', card: 'border-indigo-100 bg-indigo-50' },
+    amber: { badge: 'bg-red-100 text-red-700', card: 'border-red-100 bg-red-50' },
+    indigo: { badge: 'bg-yellow-100 text-yellow-700', card: 'border-yellow-100 bg-yellow-50' },
   }
   const s = styles[color]
   return (
