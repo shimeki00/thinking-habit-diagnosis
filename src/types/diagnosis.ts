@@ -42,6 +42,20 @@ export type Answer = {
   typeIds: string[]
 }
 
+export type Section = { title: string; body: string }
+
+export type TypeDetail = {
+  intro: string[]
+  strengths: Section[]
+  weaknesses: Section[]
+  triggerScenes: string[]
+  teamImpact: string[]
+  leverage: Section[]
+  askOthers: string
+  todayAction: string
+  closingNote: string
+}
+
 export type ScoreResult = {
   scores: Record<string, number>
   correctionScores: Record<string, number>
